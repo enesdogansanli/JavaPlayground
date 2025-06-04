@@ -18,4 +18,4 @@ In this project, we will develop java projects. The main purpose of this repo is
 | --------   | ------- |
 | Layered Architecture File Layout | ✅ | 
 | Web App Hello World  | ✅ |
-| | |
+| User Panel| 🔲 |
