@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules Engine Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .approach-section {
+            margin-bottom: 50px;
+        }
+        
+        .approach-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .architecture-diagram {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-diagram::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.1) 2px,
+                rgba(255,255,255,0.1) 4px
+            );
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .diagram-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .flow-step {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255,255,255,0.15);
+            padding: 25px 15px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .flow-step:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .step-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 20px;
+            border-bottom: 1px solid #e1e8ed;
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .pros {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .cons {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .code-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .code-example::before {
+            content: attr(data-title);
+            position: absolute;
+            top: 0;
+            right: 15px;
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.8em;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .communication-patterns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .pattern-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .pattern-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .pattern-desc {
+            color: #5a6c7d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .pattern-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .pattern-features li {
+            padding: 5px 0;
+            color: #34495e;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .pattern-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .technology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .tech-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .tech-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .tech-card p {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .flow-container {
+                flex-direction: column;
+            }
+            
+            .flow-step::after {
+                content: '↓';
+                bottom: -25px;
+                right: 50%;
+                top: auto;
+                transform: translateX(50%);
+            }
+            
+            .comparison-table {
+                font-size: 0.9em;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Rules Engine Mimarisi</h1>
+            <p>Finansal Uygulamalar için İletişim Modelleri</p>
+        </div>
+        
+        <div class="content">
+            <!-- Approach 1: Centralized -->
+            <div class="approach-section">
+                <div class="approach-title">🎯 Yaklaşım 1: Merkezi Rules Engine (Önerilen)</div>
+                
+                <div class="architecture-diagram">
+                    <div class="diagram-content">
+                        <h3 style="text-align: center; margin-bottom: 30px;">Merkezi Rules Engine Akışı</h3>
+                        <div class="flow-container">
+                            <div class="flow-step">
+                                <div class="step-title">Client Request</div>
+                                <div class="step-desc">Transaction request</div>
+                            </div>
+                            <div class="flow-step">
+                                <div class="step-title">Business Service</div>
+                                <div class="step-desc">Payment/Transfer Service</div>
+                            </div>
+                            <div class="flow-step">
+                                <div class="step-title">Rules Engine</div>
+                                <div class="step-desc">Centralized evaluation</div>
+                            </div>
+                            <div class="flow-step">
+                                <div class="step-title">Decision</div>
+                                <div class="step-desc">Allow/Block/Review</div>
+                            </div>
+                            <div class="flow-step">
+                                <div class="step-title">Response</div>
+                                <div class="step-desc">Final result</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comparison Table -->
+            <div class="approach-section">
+                <div class="approach-title">📊 Yaklaşım Karşılaştırması</div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Yaklaşım</th>
+                            <th>Avantajlar</th>
+                            <th>Dezavantajlar</th>
+                            <th>Kullanım Durumu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Merkezi Rules Engine</strong></td>
+                            <td class="pros">
+                                • Tutarlı kural yönetimi<br>
+                                • Kolay güncelleme<br>
+                                • Audit trail merkezi<br>
+                                • Performans optimizasyonu
+                            </td>
+                            <td class="cons">
+                                • Single point of failure<br>
+                                • Network latency<br>
+                                • Scaling challenges
+                            </td>
+                            <td>Büyük finansal kurumlar, sıkı compliance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distributed Rules</strong></td>
+                            <td class="pros">
+                                • Düşük latency<br>
+                                • High availability<br>
+                                • Service autonomy<br>
+                                • Independent scaling
+                            </td>
+                            <td class="cons">
+                                • Kural tutarsızlığı riski<br>
+                                • Güncelleme zorluğu<br>
+                                • Audit complexity
+                            </td>
+                            <td>Mikroservis odaklı, hızlı sistemler</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hybrid Approach</strong></td>
+                            <td class="pros">
+                                • Flexibility<br>
+                                • Kritik kurallar merkezi<br>
+                                • Performance balance<br>
+                                • Fault tolerance
+                            </td>
+                            <td class="cons">
+                                • Karmaşık mimari<br>
+                                • Yönetim zorluğu<br>
+                                • Development overhead
+                            </td>
+                            <td>Enterprise uygulamalar, mixed requirements</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Communication Patterns -->
+            <div class="approach-section">
+                <div class="approach-title">🔄 İletişim Modelleri</div>
+                
+                <div class="communication-patterns">
+                    <div class="pattern-card">
+                        <div class="pattern-title">Synchronous API Call</div>
+                        <div class="pattern-desc">Business service, rules engine'i HTTP/gRPC ile çağırır</div>
+                        <ul class="pattern-features">
+                            <li>Real-time decisions</li>
+                            <li>Immediate response</li>
+                            <li>Simple implementation</li>
+                            <li>Blocking operation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-title">Event-Driven (Async)</div>
+                        <div class="pattern-desc">Events publish edilir, rules engine consume eder</div>
+                        <ul class="pattern-features">
+                            <li>Non-blocking</li>
+                            <li>High throughput</li>
+                            <li>Eventual consistency</li>
+                            <li>Complex error handling</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-title">Batch Processing</div>
+                        <div class="pattern-desc">Transactions batch olarak işlenir</div>
+                        <ul class="pattern-features">
+                            <li>High efficiency</li>
+                            <li>Lower costs</li>
+                            <li>Delayed decisions</li>
+                            <li>Good for analytics</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-title">Pre-computed Rules</div>
+                        <div class="pattern-desc">Rules önceden hesaplanıp cache'lenir</div>
+                        <ul class="pattern-features">
+                            <li>Ultra-fast response</li>
+                            <li>High availability</li>
+                            <li>Stale data risk</li>
+                            <li>Memory intensive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technology Choices -->
+            <div class="approach-section">
+                <div class="approach-title">💻 Teknoloji Seçimleri</div>
+                
+                <div class="technology-grid">
+                    <div class="tech-card">
+                        <h3>Java/Kotlin</h3>
+                        <p>Enterprise dünyasında standart. Drools, robust ecosystem, banking industry'de yaygın.</p>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <h3>Go</h3>
+                        <p>Yüksek performans, düşük latency. Concurrency support, cloud-native.</p>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <h3>Rust</h3>
+                        <p>Memory safety, extreme performance. Financial calculations için ideal.</p>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <h3>Node.js</h3>
+                        <p>Hızlı development, JSON-native. Event-driven architecture için uygun.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Code Examples -->
+            <div class="approach-section">
+                <div class="approach-title">📝 Implementation Örnekleri</div>
+                
+                <div class="code-example" data-title="Merkezi Rules Engine API">
+// Business Service'ten Rules Engine'e çağrı
+async function evaluateTransaction(transaction) {
+  const ruleRequest = {
+    transactionId: transaction.id,
+    userId: transaction.userId,
+    amount: transaction.amount,
+    type: transaction.type,
+    context: {
+      deviceId: transaction.deviceId,
+      location: transaction.location,
+      timestamp: new Date()
+    }
+  };
+
+  try {
+    const response = await rulesEngineClient.evaluate(ruleRequest);
+    
+    switch (response.decision) {
+      case 'APPROVED':
+        return await processTransaction(transaction);
+      case 'BLOCKED':
+        throw new TransactionBlockedException(response.reason);
+      case 'MANUAL_REVIEW':
+        return await queueForManualReview(transaction, response);
+      case 'ADDITIONAL_AUTH':
+        return await requireAdditionalAuth(transaction, response.methods);
+    }
+  } catch (error) {
+    // Fallback strategy
+    return await handleRulesEngineFailure(transaction, error);
+  }
+}
+                </div>
+                
+                <div class="code-example" data-title="Event-Driven Implementation">
+// Event Publisher (Business Service)
+await eventBus.publish('transaction.initiated', {
+  transactionId: transaction.id,
+  userId: transaction.userId,
+  amount: transaction.amount,
+  metadata: transaction.metadata
+});
+
+// Event Consumer (Rules Engine)
+eventBus.subscribe('transaction.initiated', async (event) => {
+  const decision = await evaluateRules(event.data);
+  
+  await eventBus.publish('transaction.evaluated', {
+    transactionId: event.data.transactionId,
+    decision: decision.result,
+    riskScore: decision.riskScore,
+    reasons: decision.reasons
+  });
+});
+
+// Response Handler (Business Service)
+eventBus.subscribe('transaction.evaluated', async (event) => {
+  const transaction = await getTransaction(event.data.transactionId);
+  await handleDecision(transaction, event.data);
+});
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

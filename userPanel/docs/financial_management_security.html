@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finansal Uygulama Güvenlik Mimarisi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #c31432, #240b36);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.05) 2px,
+                rgba(255,255,255,0.05) 4px
+            );
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            margin-top: 15px;
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .architecture {
+            padding: 50px;
+            background: #f8f9fa;
+        }
+        
+        .security-layers {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .layer {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-left: 8px solid;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: translate(50px, -50px);
+        }
+        
+        .perimeter-layer {
+            border-left-color: #e74c3c;
+        }
+        
+        .perimeter-layer::before {
+            background: #e74c3c;
+        }
+        
+        .network-layer {
+            border-left-color: #f39c12;
+        }
+        
+        .network-layer::before {
+            background: #f39c12;
+        }
+        
+        .application-layer {
+            border-left-color: #3498db;
+        }
+        
+        .application-layer::before {
+            background: #3498db;
+        }
+        
+        .data-layer {
+            border-left-color: #27ae60;
+        }
+        
+        .data-layer::before {
+            background: #27ae60;
+        }
+        
+        .compliance-layer {
+            border-left-color: #9b59b6;
+        }
+        
+        .compliance-layer::before {
+            background: #9b59b6;
+        }
+        
+        .layer-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .layer-title::before {
+            content: '';
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, currentColor, rgba(255,255,255,0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .component {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .component::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .component:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .component:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .component h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        .component p {
+            margin: 0;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .rules-engine {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 25px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rules-engine::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .rules-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .rule-category {
+            background: rgba(255,255,255,0.15);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .rule-category h3 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #fff;
+        }
+        
+        .rule-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .rule-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rule-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .rule-list li::before {
+            content: '🔒';
+            font-size: 1.2em;
+        }
+        
+        .compliance-framework {
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 25px;
+            margin: 50px 0;
+        }
+        
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .framework-item {
+            background: rgba(255,255,255,0.2);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .framework-item:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .framework-item h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .tech-stack {
+            background: #2c3e50;
+            color: white;
+            padding: 50px;
+            border-radius: 25px;
+            margin: 50px 0;
+        }
+        
+        .tech-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .tech-category {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .tech-category h4 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .tech-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .tech-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .tech-list li::before {
+            content: '⚡';
+            color: #f39c12;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .architecture {
+                padding: 25px;
+            }
+            
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rules-grid,
+            .framework-grid,
+            .tech-categories {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Finansal Uygulama Güvenlik Mimarisi</h1>
+            <p>Katmanlı Güvenlik ve Compliance Framework</p>
+        </div>
+        
+        <div class="architecture">
+            <div class="security-layers">
+                <!-- Perimeter Security -->
+                <div class="layer perimeter-layer">
+                    <div class="layer-title">🛡️ Perimeter Security (Çevre Güvenliği)</div>
+                    <p>Dış tehditlerden koruma ve erişim kontrolü</p>
+                    <div class="components-grid">
+                        <div class="component">
+                            <h3>Web Application Firewall (WAF)</h3>
+                            <p>SQL injection, XSS, CSRF saldırılarına karşı koruma. Rate limiting ve bot protection.</p>
+                        </div>
+                        <div class="component">
+                            <h3>DDoS Protection</h3>
+                            <p>Cloudflare/AWS Shield ile dağıtık hizmet reddi saldırılarından korunma.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Geographic Restrictions</h3>
+                            <p>Belirli ülkelerden erişimi kısıtlama. IP whitelist/blacklist yönetimi.</p>
+                        </div>
+                        <div class="component">
+                            <h3>VPN/Dedicated Lines</h3>
+                            <p>Kurumsal müşteriler için güvenli bağlantı kanalları.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Network Security -->
+                <div class="layer network-layer">
+                    <div class="layer-title">🌐 Network Security (Ağ Güvenliği)</div>
+                    <p>Ağ trafiği kontrolü ve segmentasyon</p>
+                    <div class="components-grid">
+                        <div class="component">
+                            <h3>Network Segmentation</h3>
+                            <p>VPC/VLAN ile mikroservislerin izolasyonu. DMZ konfigürasyonu.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Service Mesh Security</h3>
+                            <p>Istio/Linkerd ile mTLS, traffic encryption, service-to-service auth.</p>
+                        </div>
+                        <div class="component">
+                            <h3>API Rate Limiting</h3>
+                            <p>Per-user, per-IP, per-endpoint rate limiting. Adaptive throttling.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Network Monitoring</h3>
+                            <p>Real-time traffic analysis, anomaly detection, intrusion detection.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Application Security -->
+                <div class="layer application-layer">
+                    <div class="layer-title">🔐 Application Security (Uygulama Güvenliği)</div>
+                    <p>Uygulama seviyesinde güvenlik kontrolleri</p>
+                    <div class="components-grid">
+                        <div class="component">
+                            <h3>Multi-Factor Authentication</h3>
+                            <p>SMS, Email, TOTP, Hardware tokens. Risk-based authentication.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Session Management</h3>
+                            <p>Secure session handling, timeout policies, concurrent session limits.</p>
+                        </div>
+                        <div class="component">
+                            <h3>API Security</h3>
+                            <p>OAuth 2.0, JWT validation, API versioning, schema validation.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Input Validation</h3>
+                            <p>Strict input sanitization, SQL injection prevention, XSS protection.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Security -->
+                <div class="layer data-layer">
+                    <div class="layer-title">💾 Data Security (Veri Güvenliği)</div>
+                    <p>Veri koruma ve şifreleme</p>
+                    <div class="components-grid">
+                        <div class="component">
+                            <h3>Encryption at Rest</h3>
+                            <p>AES-256 disk encryption, database TDE, key rotation policies.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Encryption in Transit</h3>
+                            <p>TLS 1.3, certificate pinning, perfect forward secrecy.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Key Management</h3>
+                            <p>HSM, AWS KMS, key escrow, split knowledge protocols.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Data Classification</h3>
+                            <p>PII, financial data, confidential marking. Access based on classification.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Compliance & Audit -->
+                <div class="layer compliance-layer">
+                    <div class="layer-title">📋 Compliance & Audit (Uygunluk ve Denetim)</div>
+                    <p>Yasal gereklilikler ve denetim süreçleri</p>
+                    <div class="components-grid">
+                        <div class="component">
+                            <h3>Audit Logging</h3>
+                            <p>Immutable audit trails, tamper-evident logs, long-term retention.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Real-time Monitoring</h3>
+                            <p>SIEM integration, anomaly detection, alert correlation.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Compliance Reporting</h3>
+                            <p>Automated compliance reports, regulatory submission capabilities.</p>
+                        </div>
+                        <div class="component">
+                            <h3>Incident Response</h3>
+                            <p>24/7 SOC, incident classification, automated containment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rules Engine -->
+            <div class="rules-engine">
+                <div class="rules-content">
+                    <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">⚙️ Finansal Kurallar Motoru</h2>
+                    <p style="text-align: center; font-size: 1.2em; opacity: 0.9;">Dinamik kural yönetimi ve risk değerlendirmesi</p>
+                    
+                    <div class="rules-grid">
+                        <div class="rule-category">
+                            <h3>🔍 Anti-Money Laundering (AML)</h3>
+                            <ul class="rule-list">
+                                <li>Şüpheli işlem tespiti</li>
+                                <li>Büyük miktarda nakit işlemleri</li>
+                                <li>Hızlı para transferleri</li>
+                                <li>Unusual account patterns</li>
+                                <li>Cross-border transactions</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rule-category">
+                            <h3>👤 Know Your Customer (KYC)</h3>
+                            <ul class="rule-list">
+                                <li>Kimlik doğrulama seviyeli</li>
+                                <li>Risk profili değerlendirmesi</li>
+                                <li>Periyodik güncelleme</li>
+                                <li>Enhanced due diligence</li>
+                                <li>Beneficial ownership check</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rule-category">
+                            <h3>⚡ Real-time Risk Assessment</h3>
+                            <ul class="rule-list">
+                                <li>Transaction velocity limits</li>
+                                <li>Geographic risk scoring</li>
+                                <li>Device fingerprinting</li>
+                                <li>Behavioral analytics</li>
+                                <li>ML-based fraud detection</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rule-category">
+                            <h3>💼 Business Rules</h3>
+                            <ul class="rule-list">
+                                <li>Daily transaction limits</li>
+                                <li>Account balance thresholds</li>
+                                <li>Time-based restrictions</li>
+                                <li>Product-specific rules</li>
+                                <li>Customer tier limitations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Compliance Framework -->
+            <div class="compliance-framework">
+                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">📜 Compliance Framework</h2>
+                <p style="text-align: center; font-size: 1.2em; opacity: 0.9;">Uluslararası standartlar ve yasal gereklilikler</p>
+                
+                <div class="framework-grid">
+                    <div class="framework-item">
+                        <h4>PCI DSS</h4>
+                        <p>Payment Card Industry Data Security Standard</p>
+                    </div>
+                    <div class="framework-item">
+                        <h4>SOX</h4>
+                        <p>Sarbanes-Oxley Act Financial Reporting</p>
+                    </div>
+                    <div class="framework-item">
+                        <h4>GDPR</h4>
+                        <p>General Data Protection Regulation</p>
+                    </div>
+                    <div class="framework-item">
+                        <h4>ISO 27001</h4>
+                        <p>Information Security Management</p>
+                    </div>
+                    <div class="framework-item">
+                        <h4>NIST</h4>
+                        <p>Cybersecurity Framework</p>
+                    </div>
+                    <div class="framework-item">
+                        <h4>BDDK</h4>
+                        <p>Bankacılık Düzenleme ve Denetleme Kurumu</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technology Stack -->
+            <div class="tech-stack">
+                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px; color: white;">🛠️ Teknoloji Stack</h2>
+                
+                <div class="tech-categories">
+                    <div class="tech-category">
+                        <h4>Security & Identity</h4>
+                        <ul class="tech-list">
+                            <li>Auth0 / Keycloak</li>
+                            <li>HashiCorp Vault</li>
+                            <li>AWS IAM / Cognito</li>
+                            <li>Okta</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tech-category">
+                        <h4>Rules Engine</h4>
+                        <ul class="tech-list">
+                            <li>Drools Business Rules</li>
+                            <li>Open Policy Agent</li>
+                            <li>Apache Camel</li>
+                            <li>Custom Rule Engine</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tech-category">
+                        <h4>Monitoring & SIEM</h4>
+                        <ul class="tech-list">
+                            <li>Splunk / ELK Stack</li>
+                            <li>Prometheus + Grafana</li>
+                            <li>Datadog</li>
+                            <li>AWS CloudTrail</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tech-category">
+                        <h4>Database Security</h4>
+                        <ul class="tech-list">
+                            <li>PostgreSQL + TDE</li>
+                            <li>MongoDB Enterprise</li>
+                            <li>AWS RDS Encryption</li>
+                            <li>Database Activity Monitoring</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tech-category">
+                        <h4>API Security</h4>
+                        <ul class="tech-list">
+                            <li>Kong Gateway</li>
+                            <li>AWS API Gateway</li>
+                            <li>Rate Limiting</li>
+                            <li>API Analytics</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tech-category">
+                        <h4>Compliance Tools</h4>
+                        <ul class="tech-list">
+                            <li>Compliance automation</li>
+                            <li>Audit trail systems</li>
+                            <li>Risk assessment tools</li>
+                            <li>Regulatory reporting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

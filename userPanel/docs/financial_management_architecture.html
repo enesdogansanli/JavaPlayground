@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geliştirilmiş Finansal Mimari</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .architecture {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .layer {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .layer-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .service-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .service-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .service-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        
+        .client-layer::before { background: #e74c3c; }
+        .security-layer::before { background: #f39c12; }
+        .gateway-layer::before { background: #3498db; }
+        .management-layer::before { background: #9b59b6; }
+        .business-layer::before { background: #27ae60; }
+        .infrastructure-layer::before { background: #34495e; }
+        
+        .database-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .database-box {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            border: 3px solid #3498db;
+        }
+        
+        .monitoring-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .monitoring-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .cache-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .cache-box {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .connections {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #3498db;
+            margin: 10px 0;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .improvement-notes {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+        
+        .improvement-notes h3 {
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+        
+        .improvement-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .improvement-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .improvement-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .improvement-list li::before {
+            content: '✅';
+            font-size: 1.2em;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .warning-box h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box h3::before {
+            content: '⚠️';
+            font-size: 1.3em;
+        }
+        
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .database-section,
+            .monitoring-section,
+            .cache-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Geliştirilmiş Finansal Uygulama Mimarisi</h1>
+            <p>Production-Ready Enterprise Architecture</p>
+        </div>
+        
+        <div class="architecture">
+            <!-- Client Layer -->
+            <div class="layer client-layer">
+                <div class="layer-title">📱 Client Katmanı</div>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">Web App (React/Vue)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Mobile App (iOS/Android)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">3rd Party Integrations</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <!-- Security Layer -->
+            <div class="layer security-layer">
+                <div class="layer-title">🛡️ Güvenlik Katmanı</div>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">WAF (Cloudflare/AWS)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">DDoS Protection</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Load Balancer (nginx)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">SSL/TLS Termination</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <!-- API Gateway Layer -->
+            <div class="layer gateway-layer">
+                <div class="layer-title">🚪 API Gateway Katmanı</div>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">Kong/Ambassador Gateway</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Rate Limiting</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">JWT Validation</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Request Routing</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <!-- Management Services -->
+            <div class="layer management-layer">
+                <div class="layer-title">⚙️ Management Services</div>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">Authentication Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Authorization Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Rules Engine</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Config Server</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Service Discovery (Eureka)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Notification Service</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <!-- Business Services -->
+            <div class="layer business-layer">
+                <div class="layer-title">💼 Business Services</div>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">User Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Account Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Transaction Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Payment Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Transfer Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Fraud Detection (AI)</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Audit Service</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Reporting Service</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <!-- Infrastructure Layer -->
+            <div class="layer infrastructure-layer">
+                <div class="layer-title">🏗️ Infrastructure Katmanı</div>
+                
+                <!-- Message Queue -->
+                <h4 style="color: #2c3e50; margin-top: 30px;">📬 Message Queue & Event Bus</h4>
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="service-content">Apache Kafka</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">RabbitMQ</div>
+                    </div>
+                    <div class="service-box">
+                        <div class="service-content">Redis Streams</div>
+                    </div>
+                </div>
+                
+                <!-- Cache Layer -->
+                <h4 style="color: #2c3e50; margin-top: 30px;">⚡ Cache Katmanı</h4>
+                <div class="cache-section">
+                    <div class="cache-box">Redis Cluster</div>
+                    <div class="cache-box">Session Store</div>
+                    <div class="cache-box">Rule Cache</div>
+                    <div class="cache-box">API Response Cache</div>
+                </div>
+                
+                <!-- Databases -->
+                <h4 style="color: #2c3e50; margin-top: 30px;">💾 Database Katmanı</h4>
+                <div class="database-section">
+                    <div class="database-box">UserDB (PostgreSQL)</div>
+                    <div class="database-box">AccountDB (PostgreSQL)</div>
+                    <div class="database-box">TransactionDB (PostgreSQL)</div>
+                    <div class="database-box">RulesDB (PostgreSQL)</div>
+                    <div class="database-box">AuditDB (PostgreSQL)</div>
+                    <div class="database-box">FraudDB (MongoDB)</div>
+                    <div class="database-box">AnalyticsDB (ClickHouse)</div>
+                </div>
+                
+                <!-- Monitoring -->
+                <h4 style="color: #2c3e50; margin-top: 30px;">📊 Monitoring & Logging</h4>
+                <div class="monitoring-section">
+                    <div class="monitoring-box">ELK Stack</div>
+                    <div class="monitoring-box">Prometheus</div>
+                    <div class="monitoring-box">Grafana</div>
+                    <div class="monitoring-box">Jaeger (Tracing)</div>
+                    <div class="monitoring-box">AlertManager</div>
+                </div>
+            </div>
+            
+            <!-- Improvements -->
+            <div class="improvement-notes">
+                <h3>🚀 Ana Geliştirmeler</h3>
+                <ul class="improvement-list">
+                    <li>WAF ve DDoS koruması eklendi</li>
+                    <li>Message Queue katmanı (Kafka) asenkron iletişim için</li>
+                    <li>Redis Cache katmanı performans için</li>
+                    <li>Monitoring ve logging stack'i (ELK + Prometheus)</li>
+                    <li>Database'ler domain'lere göre ayrıldı</li>
+                    <li>Audit ve Fraud Detection ayrı servisler</li>
+                    <li>SSL/TLS termination ve load balancer</li>
+                    <li>Service mesh hazırlığı (Istio için)</li>
+                </ul>
+            </div>
+            
+            <!-- Critical Points -->
+            <div class="warning-box">
+                <h3>Kritik Noktalar</h3>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li><strong>Security First:</strong> WAF → Load Balancer → API Gateway sırası</li>
+                    <li><strong>Event-Driven:</strong> Kafka ile asenkron audit ve compliance</li>
+                    <li><strong>Cache Strategy:</strong> Rules, sessions ve API responses için</li>
+                    <li><strong>Database Separation:</strong> Her domain kendi DB'si</li>
+                    <li><strong>Monitoring:</strong> Real-time alerting ve distributed tracing</li>
+                    <li><strong>Compliance:</strong> Immutable audit trail Kafka ile</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
