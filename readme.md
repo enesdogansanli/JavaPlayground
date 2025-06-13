@@ -12,9 +12,10 @@ In this project, we will develop java projects. The main purpose of this repo is
 
 # TABLES
 
-✅ 
+✅  🔲
 
 | Project    | Status  |
 | --------   | ------- |
-| Layered Architecture File Layout | 🔲 | 
-| Hello World  | 🔲 |
+| Layered Architecture File Layout | ✅ | 
+| Web App Hello World  | ✅ |
+| | |
